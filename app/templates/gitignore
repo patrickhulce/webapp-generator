@@ -4,4 +4,6 @@ node_modules/
 env/
 www-root/
 
+app/less/vendor/
+
 *.pyc

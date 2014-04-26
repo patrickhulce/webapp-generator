@@ -1,6 +1,16 @@
+var _ = require('lodash');
+
+var bowerSrcPathsJson = '<%= bowerSrcPaths %>';
+var bowerSrcPaths = JSON.parse(bowerSrcPathsJson);
+
 module.exports = function (grunt) {
   var staticFolder = 'www-root';
   var destPrefix = staticFolder + '/';
+
+  var copyPaths = bowerSrcPaths.copy;
+  _.each(copyPaths, function(obj) {
+    obj.dest = destPrefix + obj.dest;
+  });
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -28,6 +38,9 @@ module.exports = function (grunt) {
             dest: destPrefix + 'index.html'
           }
         ]
+      },
+      vendor: {
+        files: copyPaths
       }
     },
     concat: {
@@ -35,19 +48,11 @@ module.exports = function (grunt) {
         files: [
           {
             dest: destPrefix + 'css/vendor.css',
-            src: [
-              'bower_components/bootstrap/dist/css/bootstrap.css'
-            ]},
+            src: bowerSrcPaths.css
+          },
           {
             dest: destPrefix + 'js/vendor.js',
-            src: [
-              'bower_components/jquery/dist/jquery.js',
-              'bower_components/angular/angular.js',
-              'bower_components/bootstrap/dist/js/bootstrap.js',
-              'bower_components/angular-bootstrap/ui-bootstrap.js',
-              'bower_components/angular-route/angular-route.js',
-              'bower_components/underscore/underscore.js'
-            ]
+            src: bowerSrcPaths.js
           }
         ]
       },
@@ -70,6 +75,14 @@ module.exports = function (grunt) {
         ]
       }
     },
+    shell: {
+      appRestart: {
+        command: 'sh misc/app.sh restart'
+      },
+      appStop: {
+        command: 'sh misc/app.sh stop'
+      }
+    },
     watch: {
       appJs: {
         files: ['app/js/**/*.js'],
@@ -82,12 +95,16 @@ module.exports = function (grunt) {
       appHtml: {
         files: ['app/index.html', 'app/partials/**/*.html'],
         tasks: ['copy']
+      },
+      appPy: {
+        files: ['app/**/*.py'],
+        tasks: ['shell:appRestart']
       }
     },
     connect: {
       server: {
         options: {
-          port: 9000,
+          port: 5000,
           base: staticFolder
         }
       }
@@ -100,9 +117,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-shell');
 
-  var buildTasks = ['less', 'concat', 'copy', 'uglyify'];
-  var runTasks = ['watch', 'connect'];
+  var buildTasks = ['less', 'concat', 'copy', 'uglify'];
+  var runTasks = ['connect', 'shell:appRestart', 'watch'];
   var testTesks = [];
   var defaultTasks = buildTasks.concat(runTasks);
 

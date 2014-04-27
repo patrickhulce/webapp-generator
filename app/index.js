@@ -58,6 +58,7 @@ var PyappGenerator = yeoman.generators.Base.extend({
     this.on('end', function () {
       if (!this.options['skip-install']) {
         this.installDependencies();
+        this.spawnCommand('touch', ['app/__init__.py']);
         this.spawnCommand('sh', ['misc/app.sh', 'install']);
       }
     });
@@ -80,6 +81,12 @@ var PyappGenerator = yeoman.generators.Base.extend({
       {
         name: 'appDescription',
         message: 'Application description: '
+      },
+      {
+        name: 'usePython',
+        type: 'confirm',
+        message: 'Use Python? ',
+        default: true
       }
     ];
 
@@ -99,6 +106,8 @@ var PyappGenerator = yeoman.generators.Base.extend({
     var prompts = basicPrompts.concat(bowerPrompts);
     this.prompt(prompts, function (props) {
       this.appName = props.appName;
+      this.appDescription = props.appDescription;
+      this.usePython = props.usePython;
 
       var bowerPkgs = this.bowerPackages;
       var options = this.optionalBowerPackages;
@@ -114,13 +123,13 @@ var PyappGenerator = yeoman.generators.Base.extend({
         js: _.map(_.filter(bowerPkgs, 'js'), 'js'),
         copy: _.map(_.filter(bowerPkgs, 'copy'), 'copy')
       });
+      this.runTasks = this.usePython ? 'shell:appRestart' : 'connect';
 
       done();
     }.bind(this));
   },
 
   app: function () {
-    this.mkdir('misc');
     this.mkdir('app');
     this.mkdir('app/js');
     this.mkdir('app/less');
@@ -134,11 +143,16 @@ var PyappGenerator = yeoman.generators.Base.extend({
     this.template('app/app.js', 'app/js/app.js');
     this.copy('app/app.less', 'app/less/app.less');
 
-    this.copy('misc/app.sh', 'misc/app.sh');
-    this.copy('misc/requirements.txt', 'misc/requirements.txt');
-    this.copy('app/__init__.py', 'app/__init__.py');
-    this.copy('app/app.py', 'app/app.py');
-    this.copy('app/routes.py', 'app/routes.py');
+    if (this.usePython) {
+      this.copy('Vagrantfile', 'Vagrantfile');
+
+      this.mkdir('misc');
+      this.copy('misc/app.sh', 'misc/app.sh');
+      this.copy('misc/bootstrap.sh', 'misc/bootstrap.sh');
+      this.copy('misc/requirements.txt', 'misc/requirements.txt');
+      this.copy('app/app.py', 'app/app.py');
+      this.copy('app/routes.py', 'app/routes.py');
+    }
 
     this.bowerInstall(this.toInstall, { save: true });
   },

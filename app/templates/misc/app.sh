@@ -14,21 +14,23 @@ install() {
 }
 run() {
     venv_up
-    gunicorn -D -w 4 app.app:app &
+    vagrant up
+    gunicorn -D app.app:app -b 0.0.0.0:9000 &
+    echo 'Server listening on port 9000'
     deactivate
 }
 stop() {
-    kill $(ps -A | grep 'gunicorn -w 4 app.app' | awk '{ print $1 }')
+    kill $(ps -A | grep 'gunicorn -D app.app' | awk '{ print $1 }')
 }
 case "$1" in
     'run')
-    install
+        install
         run
         ;;
     'install')
         install
         ;;
-    'kill')
+    'stop')
         stop
         ;;
     'restart')

@@ -3,6 +3,13 @@ var _ = require('lodash');
 var bowerSrcPathsJson = '<%= bowerSrcPaths %>';
 var bowerSrcPaths = JSON.parse(bowerSrcPathsJson);
 
+/*
+Add more package mappings here
+bowerSrcPaths.js.push('bower_components/pkgname/dist/pkgname.js');
+bowerSrcPaths.css.push('bower_components/pkgname/dist/pkgname.css');
+bowerSrcPaths.copy.push({src: 'bower_components/pkgname/assets/**', dest: 'assets/images/'});
+*/
+
 module.exports = function (grunt) {
   var staticFolder = 'www-root';
   var destPrefix = staticFolder + '/';
@@ -90,11 +97,11 @@ module.exports = function (grunt) {
       },
       appLess: {
         files: ['app/less/**/*.less'],
-        tasks: ['less']
+        tasks: ['less:app']
       },
       appHtml: {
         files: ['app/index.html', 'app/partials/**/*.html'],
-        tasks: ['copy']
+        tasks: ['copy:app']
       },
       appPy: {
         files: ['app/**/*.py'],
@@ -104,7 +111,7 @@ module.exports = function (grunt) {
     connect: {
       server: {
         options: {
-          port: 5000,
+          port: 8080,
           base: staticFolder
         }
       }
@@ -120,10 +127,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-shell');
 
   var buildTasks = ['less', 'concat', 'copy', 'uglify'];
-  var runTasks = ['connect', 'shell:appRestart', 'watch'];
+  var runTasks = ['<%= runTasks %>', 'watch'];
   var testTesks = [];
   var defaultTasks = buildTasks.concat(runTasks);
 
+  grunt.registerTask('server', ['connect']);
   grunt.registerTask('build', buildTasks);
   grunt.registerTask('run', runTasks);
   grunt.registerTask('default', defaultTasks);

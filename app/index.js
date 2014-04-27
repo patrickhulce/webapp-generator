@@ -6,7 +6,7 @@ var chalk = require('chalk');
 var _ = require('lodash');
 
 
-var PyappGenerator = yeoman.generators.Base.extend({
+var WebappGenerator = yeoman.generators.Base.extend({
   init: function () {
     this.pkg = require('../package.json');
     this.author = 'Patrick Hulce';
@@ -71,7 +71,7 @@ var PyappGenerator = yeoman.generators.Base.extend({
     this.log(this.yeoman);
 
     // replace it with a short and sweet description of your generator
-    this.log(chalk.magenta('You\'re using the fantastic pyapp generator.'));
+    this.log(chalk.magenta('You\'re using the fantastic webapp generator.'));
 
     var basicPrompts = [
       {
@@ -163,4 +163,4 @@ var PyappGenerator = yeoman.generators.Base.extend({
   }
 });
 
-module.exports = PyappGenerator;
+module.exports = WebappGenerator;

@@ -37,13 +37,13 @@ If you'd like to get to know Yeoman better and meet some of his friends, [Grunt]
 Scaffolds a web application with
 
 - jQuery
-- Angular (and various ng-* packages)
 - Bootstrap
 - FontAwesome
+- Angular (and various ng-* packages)
+- lodash
 
-With Python option adds
+Python option adds
 
-- Python virtualenv
 - Flask
 - Gunicorn
 - Vagrantfile
@@ -60,13 +60,13 @@ The intended usage is to offer a complete deployment solution from the start. Th
 #### Static Deployment
 
 If the python option is not enabled, the assumption is that the site (or at least the repository) will be entirely static.
-In this case, the `grunt run` command will the `grunt-contrib-connect` server for hosting the site during development.
+In this case, the `grunt run` command will use the `grunt-contrib-connect` server for hosting the site during development.
 Deployment during production will simply be hosting the `www-root` folder after a `grunt build` on the target server.
 
 #### Python Deployment
 
 If the python option is enabled, the assumption is that the site's static files will be hosted through nginx and the app itself will be hosted through Gunicorn proxy behind nginx.
-In this case, the Vagrantfile describes the Ubuntu configuration with a configured nginx server that points back the host machine for the gunicorn app.
+In this case, the Vagrantfile describes the Ubuntu configuration with a configured nginx server that points back to the host machine for the gunicorn app.
 This way all commands can easily be performed on the host machine without interacting with the guest at all. Ports 80, 3306, and 6379 are forwarded to the host.
 To the application, there is no difference running in this environment compared to production as localhost can still be referenced.
 In this scenario, `grunt` will build the files in the `www-root` directory (which nginx references through a shared Vagrant folder) and start gunicorn (which nginx references through proxy).

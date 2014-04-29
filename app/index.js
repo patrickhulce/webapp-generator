@@ -51,14 +51,13 @@ var WebappGenerator = yeoman.generators.Base.extend({
     this.optionalBowerPackages = [
       {
         name: 'angular-resource',
-        js: 'bower_components/angular-resource/ui-bootstrap.js'
+        js: 'bower_components/angular-resource/angular-resource.js'
       }
     ];
 
     this.on('end', function () {
       if (!this.options['skip-install']) {
         this.installDependencies();
-        this.spawnCommand('touch', ['app/__init__.py']);
         this.spawnCommand('sh', ['misc/app.sh', 'install']);
       }
     });
@@ -150,6 +149,7 @@ var WebappGenerator = yeoman.generators.Base.extend({
       this.copy('misc/app.sh', 'misc/app.sh');
       this.copy('misc/bootstrap.sh', 'misc/bootstrap.sh');
       this.copy('misc/requirements.txt', 'misc/requirements.txt');
+      this.spawnCommand('touch', ['app/__init__.py']);
       this.copy('app/app.py', 'app/app.py');
       this.copy('app/routes.py', 'app/routes.py');
     }

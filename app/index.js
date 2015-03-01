@@ -133,6 +133,7 @@ var WebappGenerator = yeoman.generators.Base.extend({
     this.mkdir('app/less');
     this.mkdir('app/partials');
 
+    this.template('README.md', 'README.md');
     this.template('package.json', 'package.json');
     this.template('bower.json', 'bower.json');
     this.template('Gruntfile.js', 'Gruntfile.js');
@@ -148,6 +149,7 @@ var WebappGenerator = yeoman.generators.Base.extend({
       this.copy('misc/app.sh', 'misc/app.sh');
       this.copy('misc/bootstrap.sh', 'misc/bootstrap.sh');
       this.copy('misc/requirements.txt', 'misc/requirements.txt');
+      this.copy('misc/nginx.conf', 'misc/nginx.conf');
       this.spawnCommand('touch', ['app/__init__.py']);
       this.copy('app/app.py', 'app/app.py');
       this.copy('app/routes.py', 'app/routes.py');
